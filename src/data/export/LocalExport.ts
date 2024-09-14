@@ -1,4 +1,4 @@
-import { ColumnNameMapping } from "../../presentation/components/Table/types.ts";
+import { ColumnNameMapping } from "../../presentation/components/Table/types";
 
 const exportToCSV = <T>(
   headers: ColumnNameMapping<T>[],
@@ -6,7 +6,7 @@ const exportToCSV = <T>(
   fileName: string,
 ) => {
   if (rowData.length === 0) {
-    console.warn("No data to export.");
+    console.error("No data to export.");
     return;
   }
   const csvContent =
@@ -20,7 +20,6 @@ const exportToCSV = <T>(
       .join("\n");
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;

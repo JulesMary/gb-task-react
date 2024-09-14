@@ -7,7 +7,7 @@ const useDevices = (): UseQueryResult<Device[], DefaultError> => {
   const PATH = "devices";
   return useQuery({
     queryKey: ["devices"],
-    queryFn: async () => await fetchAll(`${URL}/${PATH}`),
+    queryFn: async () => fetchAll(`${URL}/${PATH}`),
     select: (data) => data.data,
   });
 };

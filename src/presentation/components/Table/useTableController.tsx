@@ -13,7 +13,10 @@ interface TableController<T> {
   setSorting: (field: keyof T) => void;
   sortedRows: T[];
   sortBy: keyof T | null;
-  handleExport: (columnNames: ColumnNameMapping<T>[]) => void;
+  handleExport: (
+    columnNames: ColumnNameMapping<T>[],
+    fileName?: string,
+  ) => void;
 }
 
 function isKeyOf<T extends HasOid>(
@@ -73,11 +76,14 @@ const useTableController = <T extends HasOid>(
     );
   }, [sortedRows]);
 
-  const handleExport = (columnNames: ColumnNameMapping<T>[]) => {
+  const handleExport = (
+    columnNames: ColumnNameMapping<T>[],
+    fileName?: string,
+  ) => {
     exportToCSV(
       columnNames,
       sortedRows.filter((s) => selectedRows.includes(s.oid)),
-      "export",
+      fileName ?? "export",
     );
   };
 

@@ -19,11 +19,13 @@ const { Tr, Td, Th, Thead, Tbody } = MantineTable;
 interface TableProps<T extends HasOid> {
   columnNames: ColumnNameMapping<T>[];
   dataRows: T[];
+  fileName?: string;
 }
 
 const Table = <T extends HasOid>({
   columnNames,
   dataRows,
+  fileName,
 }: TableProps<T>): ReactElement => {
   const {
     selectedRows,
@@ -123,7 +125,7 @@ const Table = <T extends HasOid>({
         <Button
           variant={"outline"}
           color={"var(--mantine-color-green-8)"}
-          onClick={() => handleExport(columnNames)}
+          onClick={() => handleExport(columnNames, fileName)}
           disabled={selectedRows.length === 0}
         >
           Export as CSV

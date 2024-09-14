@@ -1,6 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
-import App from "./App.tsx";
+import App from "./App";
 import {
   DeviceDetailView,
   DeviceListView,
@@ -9,6 +9,7 @@ import {
   VulnerabilityDetailView,
   VulnerabilityListView,
 } from "./presentation/sections/vulnerability";
+import { ErrorMessage } from "./presentation/components";
 
 const baseRoutes = [
   {
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorMessage />,
     children: [
       {
         index: true,

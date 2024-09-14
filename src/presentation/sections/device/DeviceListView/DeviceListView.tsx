@@ -1,9 +1,9 @@
 import { ReactElement } from "react";
-import { Table } from "../../../components";
+import { ErrorMessage, Table } from "../../../components";
 import { useDevices } from "../../../hooks";
 
 const DeviceListView = (): ReactElement | null => {
-  const { data: devices, isError, isLoading } = useDevices();
+  const { data: devices, isLoading, error } = useDevices();
   return devices ? (
     <Table
       columnNames={[
@@ -12,11 +12,12 @@ const DeviceListView = (): ReactElement | null => {
         { key: "macAddress", label: "MAC Address" },
       ]}
       dataRows={devices}
+      fileName={"Devices"}
     />
   ) : isLoading ? (
     <p>Devices are loading</p>
-  ) : isError ? (
-    <p>Error loading devices</p>
+  ) : error ? (
+    <ErrorMessage message={error.message} />
   ) : null;
 };
 

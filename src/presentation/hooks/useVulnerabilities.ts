@@ -10,7 +10,7 @@ const useVulnerabilities = (): UseQueryResult<
   const PATH = "vulnerabilities";
   return useQuery({
     queryKey: [PATH],
-    queryFn: async () => await fetchAll(`${URL}/${PATH}`),
+    queryFn: async () => fetchAll(`${URL}/${PATH}`),
     select: (data) => data.data,
   });
 };
