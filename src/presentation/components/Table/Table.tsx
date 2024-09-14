@@ -2,37 +2,39 @@ import { ReactElement, useMemo } from "react";
 import {
   Button,
   Checkbox,
+  Container,
+  Flex,
   ScrollArea,
+  Space,
   Table as MantineTable,
 } from "@mantine/core";
 import { useTableController } from "./useTableController.tsx";
 import { ColumnNameMapping, HasOid } from "./types";
-import { TableHeader } from "./TableHeader.tsx";
-import { exportToCSV } from "../../../data/export/LocalExport.ts";
+import { TableHeader } from "./components/TableHeader";
+import { useNavigate } from "react-router-dom";
+import classes from "./Table.module.css";
 
 const { Tr, Td, Th, Thead, Tbody } = MantineTable;
 
 interface TableProps<T extends HasOid> {
   columnNames: ColumnNameMapping<T>[];
   dataRows: T[];
-  onDetail?: () => void;
 }
 
 const Table = <T extends HasOid>({
   columnNames,
   dataRows,
-  onDetail,
 }: TableProps<T>): ReactElement => {
-  const { selectedRows, toggleRow, toggleAll, setSorting, sortedRows, sortBy } =
-    useTableController(dataRows);
-
-  const handleExport = () => {
-    exportToCSV(
-      columnNames,
-      sortedRows.filter((s) => selectedRows.includes(s.oid)),
-      "export",
-    );
-  };
+  const {
+    selectedRows,
+    toggleRow,
+    toggleAll,
+    setSorting,
+    sortedRows,
+    sortBy,
+    handleExport,
+  } = useTableController(dataRows);
+  const navigate = useNavigate();
 
   const header = useMemo(() => {
     return (
@@ -40,6 +42,7 @@ const Table = <T extends HasOid>({
         <Th>
           <Checkbox
             onChange={() => toggleAll()}
+            color={"var(--mantine-color-green-8)"}
             checked={selectedRows.length === sortedRows.length}
             indeterminate={
               selectedRows.length > 0 &&
@@ -82,42 +85,57 @@ const Table = <T extends HasOid>({
             key={`${row.oid}_${index}`}
             bg={
               selectedRows.includes(row.oid)
-                ? "var(--mantine-color-blue-light)"
+                ? "var(--mantine-color-green-light)"
                 : undefined
             }
           >
             <Td>
               <Checkbox
                 aria-label="Select row"
+                color={"var(--mantine-color-green-8)"}
                 checked={selectedRows.includes(row.oid)}
-                onChange={(event) =>
-                  toggleRow(row.oid, event.currentTarget.checked)
-                }
+                onChange={(event) => {
+                  toggleRow(row.oid, event.currentTarget.checked);
+                }}
               />
             </Td>
             {columnNames.map((columnEntry) => (
-              <Td onClick={() => onDetail?.()} key={String(columnEntry.key)}>
+              <Td
+                onClick={() => {
+                  navigate(`${row.oid}`);
+                }}
+                className={classes.cell}
+                key={String(columnEntry.key)}
+              >
                 {cells.get(columnEntry.key)}
               </Td>
             ))}
           </Tr>
         );
       }),
-    [columnNames, onDetail, selectedRows, sortedRows, toggleRow],
+    [columnNames, navigate, selectedRows, sortedRows, toggleRow],
   );
 
   return (
-    <div>
-      <Button onClick={handleExport} disabled={selectedRows.length === 0}>
-        Export as CSV
-      </Button>
+    <Container className={classes.container}>
+      <Flex mb={"var(--mantine-spacing-md"} justify={"space-between"}>
+        <Space />
+        <Button
+          variant={"outline"}
+          color={"var(--mantine-color-green-8)"}
+          onClick={() => handleExport(columnNames)}
+          disabled={selectedRows.length === 0}
+        >
+          Export as CSV
+        </Button>
+      </Flex>
       <ScrollArea>
-        <MantineTable miw={800} verticalSpacing="sm">
+        <MantineTable verticalSpacing="sm" highlightOnHover>
           <Thead>{header}</Thead>
           <Tbody>{rows}</Tbody>
         </MantineTable>
       </ScrollArea>
-    </div>
+    </Container>
   );
 };
 

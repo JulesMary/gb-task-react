@@ -1,25 +1,28 @@
-import { Container, Group } from "@mantine/core";
-import { Link } from "react-router-dom";
-
-const links = [
-  { link: "devices", label: "Devices" },
-  { link: "vulnerabilities", label: "Vulnerabilities" },
-];
+import { Group } from "@mantine/core";
+import { Link, useLocation } from "react-router-dom";
+import classes from "./Header.module.css";
+import { useState } from "react";
+import { baseRoutes } from "../../../routes";
 
 const Header = () => {
-  const items = links.map((link) => (
-    <Link key={link.link} to={link.link}>
-      {link.label}
+  const { pathname } = useLocation();
+  const currentPath = pathname === "/" ? "/devices" : pathname;
+  const [active, setActive] = useState(currentPath);
+  const items = baseRoutes.map((route) => (
+    <Link
+      onClick={() => setActive(route.path)}
+      data-active={active === route.path || undefined}
+      className={classes.link}
+      key={route.path}
+      to={route.path}
+    >
+      {route.label}
     </Link>
   ));
 
   return (
-    <header>
-      <Container size="md">
-        <Group gap={5} visibleFrom="xs">
-          {items}
-        </Group>
-      </Container>
+    <header className={classes.header}>
+      <Group>{items}</Group>
     </header>
   );
 };

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { HasOid } from "./types.ts";
+import { ColumnNameMapping, HasOid } from "./types";
 import {
   loadSortKeyFromLocalStorage,
   saveSortKeyToLocalStorage,
-} from "../../../data/localStorage/SortKeyStorage.ts";
+} from "../../../data/localStorage/SortKeyStorage";
+import { exportToCSV } from "../../../data/export/LocalExport";
 
 interface TableController<T> {
   selectedRows: string[];
@@ -12,6 +13,7 @@ interface TableController<T> {
   setSorting: (field: keyof T) => void;
   sortedRows: T[];
   sortBy: keyof T | null;
+  handleExport: (columnNames: ColumnNameMapping<T>[]) => void;
 }
 
 function isKeyOf<T extends HasOid>(
@@ -71,6 +73,14 @@ const useTableController = <T extends HasOid>(
     );
   }, [sortedRows]);
 
+  const handleExport = (columnNames: ColumnNameMapping<T>[]) => {
+    exportToCSV(
+      columnNames,
+      sortedRows.filter((s) => selectedRows.includes(s.oid)),
+      "export",
+    );
+  };
+
   return {
     selectedRows,
     toggleRow,
@@ -78,6 +88,7 @@ const useTableController = <T extends HasOid>(
     setSorting: handleSorting,
     sortedRows,
     sortBy,
+    handleExport,
   };
 };
 

@@ -1,7 +1,27 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+
 import App from "./App.tsx";
-import { DeviceList } from "./presentation/sections/ListView/DeviceList.tsx";
-import { VulnerabilityList } from "./presentation/sections/ListView/VulnerabilityList.tsx";
+import {
+  DeviceDetailView,
+  DeviceListView,
+} from "./presentation/sections/device";
+import {
+  VulnerabilityDetailView,
+  VulnerabilityListView,
+} from "./presentation/sections/vulnerability";
+
+const baseRoutes = [
+  {
+    path: "/devices",
+    element: <DeviceListView />,
+    label: "Devices",
+  },
+  {
+    path: "/vulnerabilities",
+    element: <VulnerabilityListView />,
+    label: "Vulnerabilities",
+  },
+];
 
 const router = createBrowserRouter([
   {
@@ -9,15 +29,20 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "devices/",
-        element: <DeviceList />,
+        index: true,
+        element: <Navigate to="devices" replace />,
+      },
+      ...baseRoutes,
+      {
+        path: "/devices/:id",
+        element: <DeviceDetailView />,
       },
       {
-        path: "vulnerabilities/",
-        element: <VulnerabilityList />,
+        path: "/vulnerabilities/:id",
+        element: <VulnerabilityDetailView />,
       },
     ],
   },
 ]);
 
-export { router };
+export { router, baseRoutes };

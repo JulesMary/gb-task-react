@@ -3,10 +3,11 @@ import { Device } from "../../domain/entities/devices.entity";
 import { fetchAll } from "../../data/api/DeviceAPI";
 
 const useDevices = (): UseQueryResult<Device[], DefaultError> => {
-  const url = "http://localhost:8080/devices";
+  const URL = import.meta.env.VITE_BACKEND_URL;
+  const PATH = "devices";
   return useQuery({
     queryKey: ["devices"],
-    queryFn: async () => await fetchAll(url),
+    queryFn: async () => await fetchAll(`${URL}/${PATH}`),
     select: (data) => data.data,
   });
 };

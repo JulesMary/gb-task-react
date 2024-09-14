@@ -6,10 +6,11 @@ const useVulnerabilities = (): UseQueryResult<
   VulnerabilityEntity[],
   DefaultError
 > => {
-  const url = "http://localhost:8080/vulnerabilities";
+  const URL = import.meta.env.VITE_BACKEND_URL;
+  const PATH = "vulnerabilities";
   return useQuery({
-    queryKey: ["vulnerabilities"],
-    queryFn: async () => await fetchAll(url),
+    queryKey: [PATH],
+    queryFn: async () => await fetchAll(`${URL}/${PATH}`),
     select: (data) => data.data,
   });
 };

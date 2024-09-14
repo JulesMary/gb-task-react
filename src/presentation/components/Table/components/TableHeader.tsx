@@ -1,5 +1,6 @@
 import { IconChevronDown, IconSelector } from "@tabler/icons-react";
-import { Center, Group, rem, Text, UnstyledButton } from "@mantine/core";
+import { Center, Group, Text, UnstyledButton } from "@mantine/core";
+import classes from "../Table.module.css";
 
 interface TableHeaderProps {
   children: React.ReactNode;
@@ -10,13 +11,11 @@ interface TableHeaderProps {
 const TableHeader = ({ children, sorted, onSort }: TableHeaderProps) => {
   const Icon = sorted ? IconChevronDown : IconSelector;
   return (
-    <UnstyledButton onClick={onSort}>
-      <Group justify="space-between">
-        <Text fw={500} fz="sm">
-          {children}
-        </Text>
+    <UnstyledButton className={classes.control} onClick={onSort}>
+      <Group wrap="nowrap" justify="space-between">
+        <Text className={classes.headerText}>{children}</Text>
         <Center>
-          <Icon style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
+          <Icon className={classes.icon} />
         </Center>
       </Group>
     </UnstyledButton>

@@ -1,15 +1,15 @@
-import { useDevices } from "../../hooks/useDevices";
 import { ReactElement } from "react";
-import { Table } from "../../components/Table/Table";
+import { Table } from "../../../components";
+import { useDevices } from "../../../hooks";
 
-const DeviceList = (): ReactElement | null => {
+const DeviceListView = (): ReactElement | null => {
   const { data: devices, isError, isLoading } = useDevices();
   return devices ? (
     <Table
       columnNames={[
-        { key: "oid", label: "OID" },
-        { key: "hostname", label: "Host" },
-        { key: "macAddress", label: "MAC" },
+        { key: "oid", label: "ID" },
+        { key: "hostname", label: "Hostname" },
+        { key: "macAddress", label: "MAC Address" },
       ]}
       dataRows={devices}
     />
@@ -20,4 +20,4 @@ const DeviceList = (): ReactElement | null => {
   ) : null;
 };
 
-export { DeviceList };
+export { DeviceListView };

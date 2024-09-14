@@ -6,7 +6,6 @@ interface Device {
   ipv4: string;
   ipv6: string;
   oid: string;
-
   operatingSystem: string;
   openPorts: Port[];
 }

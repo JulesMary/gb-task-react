@@ -1,12 +1,7 @@
 import "./App.css";
 import { ReactElement } from "react";
 import { Outlet } from "react-router-dom";
-import { Header } from "./presentation/components/Header/Header";
-
-//TODO:
-//Detail View
-//Export
-//Styling (Mantine with styled components ? )
+import { Header } from "./presentation/components";
 
 const App = (): ReactElement => {
   return (
