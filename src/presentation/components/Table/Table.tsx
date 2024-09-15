@@ -1,4 +1,4 @@
-import { ReactElement, useMemo } from "react";
+import { ReactElement, ReactNode, useCallback, useMemo } from "react";
 import {
   Button,
   Checkbox,
@@ -8,7 +8,7 @@ import {
   Space,
   Table as MantineTable,
 } from "@mantine/core";
-import { useTableController } from "./useTableController.tsx";
+import { useTableController } from "./useTableController";
 import { ColumnNameMapping, HasOid } from "./types";
 import { TableHeader } from "./components/TableHeader";
 import { useNavigate } from "react-router-dom";
@@ -31,19 +31,24 @@ const Table = <T extends HasOid>({
     selectedRows,
     toggleRow,
     toggleAll,
-    setSorting,
+    handleSorting,
     sortedRows,
     sortBy,
+    sortReversed,
     handleExport,
   } = useTableController(dataRows);
   const navigate = useNavigate();
+  const handleRowClick = useCallback(
+    (oid: string) => () => navigate(`${oid}`),
+    [navigate],
+  );
 
   const header = useMemo(() => {
     return (
       <Tr>
         <Th>
           <Checkbox
-            onChange={() => toggleAll()}
+            onChange={toggleAll}
             color={"var(--mantine-color-green-8)"}
             checked={selectedRows.length === sortedRows.length}
             indeterminate={
@@ -56,7 +61,13 @@ const Table = <T extends HasOid>({
           <Th key={String(mapping.key)}>
             <TableHeader
               sorted={sortBy === mapping.key}
-              onSort={() => setSorting(mapping.key)}
+              reversed={sortReversed}
+              onSort={() =>
+                handleSorting(
+                  mapping.key,
+                  sortBy === mapping.key ? !sortReversed : false,
+                )
+              }
             >
               {mapping.label}
             </TableHeader>
@@ -65,23 +76,18 @@ const Table = <T extends HasOid>({
       </Tr>
     );
   }, [
-    columnNames,
-    selectedRows.length,
-    setSorting,
-    sortBy,
-    sortedRows,
     toggleAll,
+    selectedRows.length,
+    sortedRows.length,
+    columnNames,
+    sortBy,
+    sortReversed,
+    handleSorting,
   ]);
 
   const rows = useMemo(
     () =>
       sortedRows.map((row, index) => {
-        //Transform row object to map to access the cells by key.
-        const cells = new Map();
-        Object.entries(row).forEach(([cellKey, cellValue]) => {
-          cells.set(cellKey, cellValue);
-        });
-
         return (
           <Tr
             key={`${row.oid}_${index}`}
@@ -96,26 +102,27 @@ const Table = <T extends HasOid>({
                 aria-label="Select row"
                 color={"var(--mantine-color-green-8)"}
                 checked={selectedRows.includes(row.oid)}
-                onChange={(event) => {
-                  toggleRow(row.oid, event.currentTarget.checked);
-                }}
+                onChange={toggleRow(row.oid)}
               />
             </Td>
-            {columnNames.map((columnEntry) => (
-              <Td
-                onClick={() => {
-                  navigate(`${row.oid}`);
-                }}
-                className={classes.cell}
-                key={String(columnEntry.key)}
-              >
-                {cells.get(columnEntry.key)}
-              </Td>
-            ))}
+            {columnNames.map((columnEntry) => {
+              const cellValue = (row as Record<string, unknown>)[
+                columnEntry.key as string
+              ];
+              return (
+                <Td
+                  key={String(columnEntry.key)}
+                  onClick={handleRowClick(row.oid)}
+                  className={classes.cell}
+                >
+                  {cellValue != null ? (cellValue as ReactNode) : "N/A"}
+                </Td>
+              );
+            })}
           </Tr>
         );
       }),
-    [columnNames, navigate, selectedRows, sortedRows, toggleRow],
+    [columnNames, handleRowClick, selectedRows, sortedRows, toggleRow],
   );
 
   return (

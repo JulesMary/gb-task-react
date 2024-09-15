@@ -4,7 +4,7 @@ const exportToCSV = <T>(
   headers: ColumnNameMapping<T>[],
   rowData: T[],
   fileName: string,
-) => {
+): void => {
   if (rowData.length === 0) {
     console.error("No data to export.");
     return;

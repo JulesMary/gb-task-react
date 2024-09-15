@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { ColumnNameMapping, HasOid } from "./types";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ColumnNameMapping, HasOid, isKeyOf } from "./types";
 import {
   loadSortKeyFromLocalStorage,
   saveSortKeyToLocalStorage,
@@ -8,9 +8,10 @@ import { exportToCSV } from "../../../data/export/LocalExport";
 
 interface TableController<T> {
   selectedRows: string[];
-  toggleRow: (oid: string, checked: boolean) => void;
+  toggleRow: (oid: string) => (event: ChangeEvent<HTMLInputElement>) => void;
   toggleAll: () => void;
-  setSorting: (field: keyof T) => void;
+  handleSorting: (field: keyof T, reversed: boolean) => void;
+  sortReversed: boolean;
   sortedRows: T[];
   sortBy: keyof T | null;
   handleExport: (
@@ -19,30 +20,27 @@ interface TableController<T> {
   ) => void;
 }
 
-function isKeyOf<T extends HasOid>(
-  key: string | number | symbol,
-  obj: T,
-): key is keyof T {
-  return key in obj;
-}
-
 const useTableController = <T extends HasOid>(
   dataRows: T[],
 ): TableController<T> => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [sortedRows, setSortedRows] = useState<T[]>(dataRows);
   const [sortBy, setSortBy] = useState<keyof T | null>(null);
+  const [sortReversed, setSortReversed] = useState(false);
 
-  const handleSorting = useCallback((field: keyof T) => {
+  const handleSorting = useCallback((field: keyof T, reversed: boolean) => {
     const collator = new Intl.Collator("en", {
       numeric: true,
       sensitivity: "accent",
     });
     setSortBy(field);
+    setSortReversed(reversed);
     saveSortKeyToLocalStorage(String(field));
     setSortedRows((prev) =>
       [...prev].sort((a, b) => {
-        return collator.compare(String(a[field]), String(b[field]));
+        return reversed
+          ? collator.compare(String(b[field]), String(a[field]))
+          : collator.compare(String(a[field]), String(b[field]));
       }),
     );
   }, []);
@@ -52,25 +50,27 @@ const useTableController = <T extends HasOid>(
     if (savedSortKey) {
       if (isKeyOf(savedSortKey, dataRows[0])) {
         setSortBy(savedSortKey);
-        handleSorting(savedSortKey);
+        handleSorting(savedSortKey, false);
       }
     }
   }, [dataRows, handleSorting]);
 
   const toggleRow = useCallback(
-    (oid: string, checked: boolean) => {
-      setSelectedRows(
-        checked
-          ? [...selectedRows, oid]
-          : selectedRows.filter((oid) => oid !== oid),
-      );
+    (oid: string) => (event: ChangeEvent<HTMLInputElement>) => {
+      if (event.target.checked) {
+        setSelectedRows((prev) => [...prev, oid]);
+      } else {
+        setSelectedRows((prev) => [
+          ...prev.filter((selectedId) => selectedId !== oid),
+        ]);
+      }
     },
-    [selectedRows],
+    [],
   );
 
   const toggleAll = useCallback(() => {
-    setSelectedRows((current) =>
-      current.length === sortedRows.length
+    setSelectedRows((prev) =>
+      prev.length === sortedRows.length
         ? []
         : sortedRows.map((item) => item.oid),
     );
@@ -91,7 +91,8 @@ const useTableController = <T extends HasOid>(
     selectedRows,
     toggleRow,
     toggleAll,
-    setSorting: handleSorting,
+    handleSorting,
+    sortReversed,
     sortedRows,
     sortBy,
     handleExport,
