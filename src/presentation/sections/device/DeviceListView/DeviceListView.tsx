@@ -1,15 +1,21 @@
 import { ReactElement } from "react";
 import { ErrorMessage, Table } from "../../../components";
 import { useDevices } from "../../../hooks";
+import { DeviceRepository } from "../../../../domain/repositories/DeviceRepository";
 
-const DeviceListView = (): ReactElement | null => {
-  const { data: devices, isLoading, error } = useDevices();
+interface DeviceListViewProps {
+  repository: DeviceRepository;
+}
+const DeviceListView = ({
+  repository,
+}: DeviceListViewProps): ReactElement | null => {
+  const { data: devices, isLoading, error } = useDevices(repository);
   return devices ? (
     <Table
       columnNames={[
-        { key: "oid", label: "ID" },
         { key: "hostname", label: "Hostname" },
-        { key: "macAddress", label: "MAC Address" },
+        { key: "ipv4", label: "IPv4 address" },
+        { key: "operatingSystem", label: "Operating system" },
       ]}
       dataRows={devices}
       fileName={"Devices"}

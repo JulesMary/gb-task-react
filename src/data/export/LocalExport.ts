@@ -9,25 +9,28 @@ const exportToCSV = <T>(
     console.error("No data to export.");
     return;
   }
-  const csvContent =
-    "sep=,\n" +
-    headers.map((header) => header.label).join(",") +
-    "\n" +
-    rowData
-      .map((row) => {
-        return headers.map((header) => `"${row[header.key]}"`).join(",");
+
+  const headerRow = headers.map((header) => header.label).join(",");
+  const csvRows = rowData.map((row) => {
+    return headers
+      .map((header) => {
+        const value = row[header.key];
+        // If floating point number: Enclose number in Excel formula-like string to avoid date format
+        if (typeof value === "number" && /\d+\.\d+/.test(String(value))) {
+          return `="${String(row[header.key])}"`;
+        }
+        return `"${row[header.key]}"`;
       })
-      .join("\n");
+      .join(",");
+  });
+  const csvContent = ["sep=,", headerRow, ...csvRows].join("\n");
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = `${fileName}.csv`;
-  document.body.appendChild(a);
   a.click();
   window.URL.revokeObjectURL(url);
-  a.remove();
 };
-
 export { exportToCSV };

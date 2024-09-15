@@ -8,8 +8,10 @@ import { exportToCSV } from "../../../data/export/LocalExport";
 
 interface TableController<T> {
   selectedRows: string[];
-  toggleRow: (oid: string) => (event: ChangeEvent<HTMLInputElement>) => void;
-  toggleAll: () => void;
+  handleToggleRow: (
+    oid: string,
+  ) => (event: ChangeEvent<HTMLInputElement>) => void;
+  handleToggleAll: () => void;
   handleSorting: (field: keyof T, reversed: boolean) => void;
   sortReversed: boolean;
   sortedRows: T[];
@@ -28,34 +30,7 @@ const useTableController = <T extends HasOid>(
   const [sortBy, setSortBy] = useState<keyof T | null>(null);
   const [sortReversed, setSortReversed] = useState(false);
 
-  const handleSorting = useCallback((field: keyof T, reversed: boolean) => {
-    const collator = new Intl.Collator("en", {
-      numeric: true,
-      sensitivity: "accent",
-    });
-    setSortBy(field);
-    setSortReversed(reversed);
-    saveSortKeyToLocalStorage(String(field));
-    setSortedRows((prev) =>
-      [...prev].sort((a, b) => {
-        return reversed
-          ? collator.compare(String(b[field]), String(a[field]))
-          : collator.compare(String(a[field]), String(b[field]));
-      }),
-    );
-  }, []);
-
-  useEffect(() => {
-    const savedSortKey = loadSortKeyFromLocalStorage();
-    if (savedSortKey) {
-      if (isKeyOf(savedSortKey, dataRows[0])) {
-        setSortBy(savedSortKey);
-        handleSorting(savedSortKey, false);
-      }
-    }
-  }, [dataRows, handleSorting]);
-
-  const toggleRow = useCallback(
+  const handleToggleRow = useCallback(
     (oid: string) => (event: ChangeEvent<HTMLInputElement>) => {
       if (event.target.checked) {
         setSelectedRows((prev) => [...prev, oid]);
@@ -68,7 +43,7 @@ const useTableController = <T extends HasOid>(
     [],
   );
 
-  const toggleAll = useCallback(() => {
+  const handleToggleAll = useCallback(() => {
     setSelectedRows((prev) =>
       prev.length === sortedRows.length
         ? []
@@ -76,21 +51,51 @@ const useTableController = <T extends HasOid>(
     );
   }, [sortedRows]);
 
-  const handleExport = (
-    columnNames: ColumnNameMapping<T>[],
-    fileName?: string,
-  ) => {
-    exportToCSV(
-      columnNames,
-      sortedRows.filter((s) => selectedRows.includes(s.oid)),
-      fileName ?? "export",
+  const handleExport = useCallback(
+    (columnNames: ColumnNameMapping<T>[], fileName?: string) => {
+      exportToCSV(
+        columnNames,
+        sortedRows.filter((s) => selectedRows.includes(s.oid)),
+        fileName ?? "export",
+      );
+    },
+    [selectedRows, sortedRows],
+  );
+
+  const handleSorting = useCallback((field: keyof T, reversed: boolean) => {
+    setSortBy(field);
+    setSortReversed(reversed);
+    saveSortKeyToLocalStorage({ field: String(field), reversed });
+    const collator = new Intl.Collator("en", {
+      numeric: true,
+      sensitivity: "accent",
+    });
+    setSortedRows((prev) =>
+      [...prev].sort((a, b) => {
+        return reversed
+          ? collator.compare(String(b[field]), String(a[field]))
+          : collator.compare(String(a[field]), String(b[field]));
+      }),
     );
-  };
+  }, []);
+
+  const initSorting = useCallback(() => {
+    const savedSorting = loadSortKeyFromLocalStorage();
+    if (savedSorting?.field) {
+      if (isKeyOf(savedSorting.field, dataRows[0])) {
+        handleSorting(savedSorting.field, savedSorting.reversed ?? false);
+      }
+    }
+  }, [dataRows, handleSorting]);
+
+  useEffect(() => {
+    initSorting();
+  }, [dataRows, handleSorting, initSorting]);
 
   return {
     selectedRows,
-    toggleRow,
-    toggleAll,
+    handleToggleRow,
+    handleToggleAll,
     handleSorting,
     sortReversed,
     sortedRows,

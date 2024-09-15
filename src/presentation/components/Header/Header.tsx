@@ -2,13 +2,13 @@ import { Group } from "@mantine/core";
 import { Link, useLocation } from "react-router-dom";
 import classes from "./Header.module.css";
 import { useState } from "react";
-import { baseRoutes } from "../../../routes";
+import { getBaseRoutes } from "../../../routes";
 
 const Header = () => {
   const { pathname } = useLocation();
   const currentPath = pathname === "/" ? "/devices" : pathname;
   const [active, setActive] = useState(currentPath);
-  const items = baseRoutes.map((route) => (
+  const items = getBaseRoutes().map((route) => (
     <Link
       onClick={() => setActive(route.path)}
       data-active={active === route.path || undefined}

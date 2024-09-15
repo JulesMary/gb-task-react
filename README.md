@@ -1,50 +1,41 @@
-# React + TypeScript + Vite
+# React Frontend Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Starting the application
 
-Currently, two official plugins are available:
+1. Install packages with ```pnpm i```
+2. If needed, create a .env file to configure the backend URL containing ```VITE_BACKEND_URL="http://localhost:8080" ```
+3. Start application in dev mode with ```pnpm run dev```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+## Features implemented:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. List of devices / vulnerabilities
+   - Sortable (asc and desc.)
+   - Selection (single, all)
+   - Export as .csv
 
-- Configure the top-level `parserOptions` property like this:
+2. Detail View for device / vulnerability
+   - Opens on row click 
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Follow up:
+- Unit tests and UI Tests
+- Better Error handling, e.g. error boundaries
+- If amount of data grows: 
+  - Virtualization of table
+  - Handle sorting on server-side 
+- Make table entries configurable
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-```js
-// ignore-eslint.config.js
-import react from 'eslint-plugin-react'
+## Third party libraries used: 
+- Axios for data fetching 
+- React-query for data handling
+- React-router-dom for routing
+- Mantine UI and Tabler icons
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+
+## Structure: 
+- Data: Handle external data access (APIs, Storage)
+- Domain: Application domain related things (e.g. domain entities)
+- Presentation: Presentation layer (views, components)
+
+

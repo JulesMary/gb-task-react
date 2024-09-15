@@ -1,10 +1,9 @@
 import { Device } from "../../domain/entities/devices.entity";
 import axios, { AxiosResponse } from "axios";
 
-async function fetchAll(
-  url: string,
-): Promise<Promise<AxiosResponse<Device[]>>> {
-  return axios.get<Device[]>(url);
+class DeviceAPI {
+  fetchAll = async (url: string): Promise<AxiosResponse<Device[]>> => {
+    return axios.get<Device[]>(url);
+  };
 }
-
-export { fetchAll };
+export { DeviceAPI };

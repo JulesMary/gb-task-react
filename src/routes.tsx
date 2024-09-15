@@ -10,11 +10,12 @@ import {
   VulnerabilityListView,
 } from "./presentation/sections/vulnerability";
 import { ErrorMessage } from "./presentation/components";
+import { DeviceRepository } from "./domain/repositories/DeviceRepository";
 
-const baseRoutes = [
+const getBaseRoutes = (deviceRepo?: DeviceRepository) => [
   {
     path: "/devices",
-    element: <DeviceListView />,
+    element: deviceRepo ? <DeviceListView repository={deviceRepo} /> : null,
     label: "Devices",
   },
   {
@@ -23,28 +24,29 @@ const baseRoutes = [
     label: "Vulnerabilities",
   },
 ];
+const getRouter = (deviceRepository: DeviceRepository) => {
+  return createBrowserRouter([
+    {
+      path: "/",
+      element: <App />,
+      errorElement: <ErrorMessage />,
+      children: [
+        {
+          index: true,
+          element: <Navigate to="devices" replace />,
+        },
+        ...getBaseRoutes(deviceRepository),
+        {
+          path: "/devices/:id",
+          element: <DeviceDetailView />,
+        },
+        {
+          path: "/vulnerabilities/:id",
+          element: <VulnerabilityDetailView />,
+        },
+      ],
+    },
+  ]);
+};
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    errorElement: <ErrorMessage />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="devices" replace />,
-      },
-      ...baseRoutes,
-      {
-        path: "/devices/:id",
-        element: <DeviceDetailView />,
-      },
-      {
-        path: "/vulnerabilities/:id",
-        element: <VulnerabilityDetailView />,
-      },
-    ],
-  },
-]);
-
-export { router, baseRoutes };
+export { getRouter, getBaseRoutes };

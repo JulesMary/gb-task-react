@@ -6,7 +6,7 @@ const useVulnerabilities = (): UseQueryResult<
   VulnerabilityEntity[],
   DefaultError
 > => {
-  const URL = import.meta.env.VITE_BACKEND_URL;
+  const URL = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8080";
   const PATH = "vulnerabilities";
   return useQuery({
     queryKey: [PATH],

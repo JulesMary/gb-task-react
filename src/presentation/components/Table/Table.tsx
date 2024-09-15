@@ -29,8 +29,8 @@ const Table = <T extends HasOid>({
 }: TableProps<T>): ReactElement => {
   const {
     selectedRows,
-    toggleRow,
-    toggleAll,
+    handleToggleRow,
+    handleToggleAll,
     handleSorting,
     sortedRows,
     sortBy,
@@ -48,7 +48,7 @@ const Table = <T extends HasOid>({
       <Tr>
         <Th>
           <Checkbox
-            onChange={toggleAll}
+            onChange={handleToggleAll}
             color={"var(--mantine-color-green-8)"}
             checked={selectedRows.length === sortedRows.length}
             indeterminate={
@@ -76,7 +76,7 @@ const Table = <T extends HasOid>({
       </Tr>
     );
   }, [
-    toggleAll,
+    handleToggleAll,
     selectedRows.length,
     sortedRows.length,
     columnNames,
@@ -102,7 +102,7 @@ const Table = <T extends HasOid>({
                 aria-label="Select row"
                 color={"var(--mantine-color-green-8)"}
                 checked={selectedRows.includes(row.oid)}
-                onChange={toggleRow(row.oid)}
+                onChange={handleToggleRow(row.oid)}
               />
             </Td>
             {columnNames.map((columnEntry) => {
@@ -122,7 +122,7 @@ const Table = <T extends HasOid>({
           </Tr>
         );
       }),
-    [columnNames, handleRowClick, selectedRows, sortedRows, toggleRow],
+    [columnNames, handleRowClick, selectedRows, sortedRows, handleToggleRow],
   );
 
   return (
