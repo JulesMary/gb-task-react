@@ -25,7 +25,7 @@ interface TableProps<T extends HasOid> {
 /**
  * Table that lists all types of data that has an oid property.
  * @param columnNames Mapping between object keys to column names.
- * @param dataRows Data to be shown in rows.
+ * @param dataRows Data to be shown in rows. Only data that matches a columnName is displayed.
  * @param fileName File name for export.
  */
 const Table = <T extends HasOid>({
