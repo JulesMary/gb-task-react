@@ -17,25 +17,20 @@
 2. Detail View for device / vulnerability
    - Opens on row click 
 
-## Follow up:
-- Unit tests and UI Tests
-- Better Error handling, e.g. error boundaries
+## What I would do next:
+- Implement Repositories for Vulnerability API access (like I did for Devices)
+- Implement adapter pattern for data export
+- Add Unit tests and UI Tests
+- Implement better error handling, e.g. error boundaries
 - If amount of data grows: 
   - Virtualization of table
   - Handle sorting on server-side 
-- Make table entries configurable
-
+- Add translation of text (i18n)
 
 ## Third party libraries used: 
 - Axios for data fetching 
 - React-query for data handling
 - React-router-dom for routing
 - Mantine UI and Tabler icons
-
-
-## Structure: 
-- Data: Handle external data access (APIs, Storage)
-- Domain: Application domain related things (e.g. domain entities)
-- Presentation: Presentation layer (views, components)
 
 

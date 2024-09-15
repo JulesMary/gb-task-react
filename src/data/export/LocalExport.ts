@@ -1,5 +1,11 @@
 import { ColumnNameMapping } from "../../presentation/components/Table/types";
 
+/**
+ * Exports given data rows to .csv file and starts download directly.
+ * @param headers headers of the csv file
+ * @param rowData data rows of the csv file
+ * @param fileName
+ */
 const exportToCSV = <T>(
   headers: ColumnNameMapping<T>[],
   rowData: T[],

@@ -38,7 +38,7 @@ const getRouter = (deviceRepository: DeviceRepository) => {
         ...getBaseRoutes(deviceRepository),
         {
           path: "/devices/:id",
-          element: <DeviceDetailView />,
+          element: <DeviceDetailView repository={deviceRepository} />,
         },
         {
           path: "/vulnerabilities/:id",

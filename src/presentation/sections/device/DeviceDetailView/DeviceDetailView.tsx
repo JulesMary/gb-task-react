@@ -2,10 +2,20 @@ import { Text } from "@mantine/core";
 import { useParams } from "react-router-dom";
 import { DetailCard } from "../../../components";
 import { useDevices } from "../../../hooks";
+import { DeviceRepository } from "../../../../domain/repositories/DeviceRepository";
 
-const DeviceDetailView = () => {
+interface DeviceDetailViewProps {
+  repository: DeviceRepository;
+}
+
+/**
+ * Detail View to show device details.
+ * @param repository
+ * @constructor
+ */
+const DeviceDetailView = ({ repository }: DeviceDetailViewProps) => {
   const { id } = useParams();
-  const { data: devices } = useDevices();
+  const { data: devices } = useDevices(repository);
   const device = devices?.find((device) => device.oid === id);
   if (!device) return <Text>{`Device with oid ${id} not found`}</Text>;
   const labels = [

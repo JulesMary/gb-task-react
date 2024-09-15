@@ -7,6 +7,14 @@ interface DetailCardProps {
   labels: string[];
   values: (string | number | undefined)[];
 }
+
+/**
+ * Card hat shows all details.
+ * @param title
+ * @param subtitle
+ * @param labels
+ * @param values
+ */
 const DetailCard = ({ title, subtitle, labels, values }: DetailCardProps) => {
   return (
     <Card withBorder p="xl" radius="md">

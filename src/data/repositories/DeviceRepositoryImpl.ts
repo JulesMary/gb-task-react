@@ -3,6 +3,9 @@ import { DeviceAPI } from "../api/DeviceAPI";
 import { Device } from "../../domain/entities/devices.entity";
 import { AxiosResponse } from "axios";
 
+/**
+ * Repository for Device API access.
+ */
 class DeviceRepositoryImpl implements DeviceRepository {
   private readonly api: DeviceAPI;
 

@@ -6,6 +6,11 @@ import { DeviceRepository } from "../../../../domain/repositories/DeviceReposito
 interface DeviceListViewProps {
   repository: DeviceRepository;
 }
+
+/**
+ * List view to show all devices with relevant information.
+ * @param repository
+ */
 const DeviceListView = ({
   repository,
 }: DeviceListViewProps): ReactElement | null => {

@@ -22,6 +22,12 @@ interface TableProps<T extends HasOid> {
   fileName?: string;
 }
 
+/**
+ * Table that lists all types of data that has an oid property.
+ * @param columnNames Mapping between object keys to column names.
+ * @param dataRows Data to be shown in rows.
+ * @param fileName File name for export.
+ */
 const Table = <T extends HasOid>({
   columnNames,
   dataRows,
@@ -37,6 +43,7 @@ const Table = <T extends HasOid>({
     sortReversed,
     handleExport,
   } = useTableController(dataRows);
+
   const navigate = useNavigate();
   const handleRowClick = useCallback(
     (oid: string) => () => navigate(`${oid}`),

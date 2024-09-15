@@ -7,21 +7,33 @@ import {
 import { exportToCSV } from "../../../data/export/LocalExport";
 
 interface TableController<T> {
+  /** ids of selected rows. **/
   selectedRows: string[];
+  /** Callback on row selection **/
   handleToggleRow: (
     oid: string,
   ) => (event: ChangeEvent<HTMLInputElement>) => void;
+  /** Callback on selecting all rows **/
   handleToggleAll: () => void;
-  handleSorting: (field: keyof T, reversed: boolean) => void;
-  sortReversed: boolean;
-  sortedRows: T[];
-  sortBy: keyof T | null;
+  /** Callback on export click **/
   handleExport: (
     columnNames: ColumnNameMapping<T>[],
     fileName?: string,
   ) => void;
+  /** Callback when changing sorting **/
+  handleSorting: (field: keyof T, reversed: boolean) => void;
+  /** Sorted array of rows **/
+  sortedRows: T[];
+  /** Current sorting key **/
+  sortBy: keyof T | null;
+  /** Boolean if sorting is reversed (desc) or not (asc) **/
+  sortReversed: boolean;
 }
 
+/**
+ * Hook that contains logic of `Table` and returns relevant callback functions and states.
+ * @param dataRows
+ */
 const useTableController = <T extends HasOid>(
   dataRows: T[],
 ): TableController<T> => {

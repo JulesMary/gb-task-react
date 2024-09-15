@@ -4,6 +4,9 @@ import classes from "./Header.module.css";
 import { useState } from "react";
 import { getBaseRoutes } from "../../../routes";
 
+/**
+ * Header component with basic navigation.
+ */
 const Header = () => {
   const { pathname } = useLocation();
   const currentPath = pathname === "/" ? "/devices" : pathname;
